@@ -1,0 +1,19 @@
+[package]
+name = "shadow-pkg"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "shadow"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+fs2 = "0.4"
+mlua = { version = "0.11", features = ["lua54", "vendored"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tar = "0.4"
+tempfile = "3"
+zstd = "0.13"

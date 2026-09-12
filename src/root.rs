@@ -1,6 +1,7 @@
 use crate::{
     archive,
     manifest::{Manifest, component},
+    ui::{self, Progress},
 };
 use anyhow::{Context, Result, ensure};
 use fs2::FileExt;
@@ -76,6 +77,7 @@ impl Root {
     }
 
     pub fn install_named(&self, package: &Path, expected_name: Option<&str>) -> Result<()> {
+        let progress = Progress::stage("Validating and installing package");
         let stage = tempfile::tempdir_in(self.path.join("work"))?;
         let manifest = archive::unpack(package, stage.path())?;
         if let Some(name) = expected_name {
@@ -112,13 +114,12 @@ impl Root {
         let target = destination.join("payload/bin").join(&manifest.name);
         symlink(&target, &link)
             .context("package staged but activation failed; inactive files retained in Cellar")?;
-        println!(
-            "Installed {} {}-r{}\nExecutable: {}",
-            manifest.name,
-            manifest.version,
-            manifest.revision,
-            link.display()
-        );
+        drop(progress);
+        ui::success(&format!(
+            "Installed {} {}-r{}",
+            manifest.name, manifest.version, manifest.revision
+        ));
+        eprintln!("  Executable: {}", link.display());
         Ok(())
     }
 
@@ -178,10 +179,12 @@ impl Root {
     }
 
     pub fn remove(&self, name: &str) -> Result<()> {
+        let progress = Progress::stage(&format!("Removing {name}"));
         let (package, _) = self.active(name)?;
         fs::remove_file(self.path.join("bin").join(name))?;
         fs::remove_dir_all(&package).context("package deactivated but cleanup failed")?;
-        println!("Removed {name}");
+        drop(progress);
+        ui::success(&format!("Removed {name}"));
         Ok(())
     }
 

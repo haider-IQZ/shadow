@@ -1,15 +1,12 @@
-Shadow v0.2.0 — direct installation and named packages
+Shadow v0.2.1 — terminal progress
 
-Install with curl, then `shadow install hello`. No GitHub authentication, Git
-checkout, Rust compiler, or Lua installation required.
+- Animated catalog/download/verification/install stages on interactive terminals.
+- Download bar with real bytes, total size, and transfer speed.
+- Colored success messages, with NO_COLOR support.
+- Plain stderr output when redirected; list output remains on stdout.
+- Download subprocess cleanup on failures and catalog size verification.
+- Legacy catalog retained for v0.2.0 clients.
 
-- Public HTTPS CLI installer with checksum verification and previous-CLI backup.
-- Named package downloads from a release-pinned catalog, verified with SHA-256.
-- Prebuilt static native hello package; local Lua recipe builds still supported.
-- Persistent default package root at ~/.local/share/shadow.
-- Cached CI builds and release package smoke test.
-
-Linux x86_64 only. The catalog currently contains only hello. This remains an
-experimental package-lifecycle preview: no dependency resolver, app upgrades,
-independent package signatures, build sandbox, or power-loss recovery yet.
-Local recipes execute with user privileges. Test in a disposable VM, without sudo.
+Update using the same public curl installer, then try `shadow install hello`.
+The catalog still contains only hello. No changes to the preview's dependency,
+sandboxing, or recovery limitations; see README.md.

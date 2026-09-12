@@ -16,6 +16,10 @@ fn package_lifecycle_and_conflicts() {
     let run = |args: &[&str]| {
         let output = shadow(args, temp.path());
         assert!(
+            !output.stderr.contains(&0x1b),
+            "redirected output must not contain ANSI escapes"
+        );
+        assert!(
             output.status.success(),
             "{}",
             String::from_utf8_lossy(&output.stderr)

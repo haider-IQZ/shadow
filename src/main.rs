@@ -1,9 +1,11 @@
 mod archive;
 mod cli;
+mod download;
 mod manifest;
 mod recipe;
 mod repository;
 mod root;
+mod ui;
 
 use anyhow::Result;
 use clap::Parser;

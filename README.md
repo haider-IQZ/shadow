@@ -38,6 +38,14 @@ Apps default to `~/.local/share/shadow`. Their executables are exposed in
 Use `shadow --root /your/dedicated/prefix ...` to override the package root.
 Pacman continues to manage the host and Shadow manages only its own prefix.
 
+## Terminal visuals
+
+Interactive terminals show a catalog spinner, download bar with actual byte
+counts and speed, verification/install stages, and a colored success line.
+Short operations may finish before a progress frame is visible. Redirected
+output and `TERM=dumb` use plain stderr messages, keeping `shadow list` stdout
+machine-readable. `NO_COLOR` disables success colors.
+
 ## Update Shadow
 
 Rerun the same curl command. The installer verifies the release binary's SHA-256

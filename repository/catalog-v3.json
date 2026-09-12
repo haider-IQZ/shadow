@@ -1,0 +1,12 @@
+{
+  "format": 3,
+  "release": "v0.2.1",
+  "packages": { "hello": "hello.shadow" },
+  "artifacts": {
+    "hello.shadow": {
+      "sha256": "35635c419ca9010219da317e9e83a71ab6040c7cc2986e9e7aaa0e49d61efb97",
+      "bytes": 6891,
+      "dependencies": []
+    }
+  }
+}

@@ -24,6 +24,8 @@ pub fn build(recipe: &Path, output: &Path) -> Result<()> {
             name: table.get("name")?,
             version: table.get("version")?,
             revision: table.get("revision")?,
+            dependencies: Vec::new(),
+            executables: None,
         })
     };
     let manifest = get().map_err(|e| anyhow::anyhow!(e.to_string()))?;

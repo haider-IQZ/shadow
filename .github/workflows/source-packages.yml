@@ -1,0 +1,34 @@
+name: Source package build (manual)
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  kitty:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .shadow-source/artifacts
+            .shadow-source/build/Cellar
+            .shadow-source/go
+            .shadow-source/.cache/go-build
+          key: source-v1-${{ runner.os }}-${{ hashFiles('src/build/**', 'Cargo.lock', 'scripts/source-builder.Dockerfile') }}-${{ hashFiles('recipes/source/**') }}
+          restore-keys: |
+            source-v1-${{ runner.os }}-${{ hashFiles('src/build/**', 'Cargo.lock', 'scripts/source-builder.Dockerfile') }}-
+      - name: Build Kitty and its Shadow library closure from pinned sources
+        run: bash scripts/build-source.sh --resume
+      - name: Save build artifacts for review (not a public package release)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadow-source-build
+          path: |
+            .shadow-source/artifacts/
+            .shadow-source/build/**/meson-logs/meson-log.txt
+          if-no-files-found: warn

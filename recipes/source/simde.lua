@@ -1,0 +1,8 @@
+return {
+    name = "simde", version = "0.8.2", revision = 1, executables = {},
+    source = { url = "https://github.com/simd-everywhere/simde/archive/refs/tags/v0.8.2.tar.gz", sha256 = "ed2a3268658f2f2a9b5367628a85ccd4cf9516460ed8604eed369653d49b25fb" },
+    build = function(ctx)
+        ctx.run({"mkdir", "-p", ctx.output .. "/include"})
+        ctx.run({"cp", "-R", "simde", ctx.output .. "/include/simde"})
+    end,
+}

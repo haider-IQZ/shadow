@@ -1,0 +1,8 @@
+return {
+    name = "xxhash", version = "0.8.3", revision = 1, executables = {},
+    source = { url = "https://github.com/Cyan4973/xxHash/archive/refs/tags/v0.8.3.tar.gz", sha256 = "aae608dfe8213dfd05d909a57718ef82f30722c392344583d3f39050c7f29a80" },
+    build = function(ctx)
+        ctx.run({"make", "-j" .. ctx.jobs, "PREFIX=" .. ctx.prefix})
+        ctx.run({"make", "PREFIX=" .. ctx.prefix, "DESTDIR=" .. ctx.destdir, "install"})
+    end,
+}

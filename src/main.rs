@@ -1,9 +1,13 @@
 mod archive;
+mod build;
+mod catalog;
 mod cli;
+mod dependency;
 mod download;
+mod installation;
+mod inventory;
 mod manifest;
 mod recipe;
-mod repository;
 mod root;
 mod ui;
 
@@ -15,6 +19,13 @@ fn main() -> Result<()> {
     let args = Cli::parse();
     match args.command {
         Command::Build { recipe, output } => recipe::build(&recipe, &output),
+        Command::Plan { recipe } => build::plan(&recipe),
+        Command::BuildClosure {
+            recipe,
+            output_dir,
+            build_root,
+            resume,
+        } => build::build(&recipe, &output_dir, &build_root, resume),
         command => {
             let path = match args.root {
                 Some(path) => path,
@@ -31,14 +42,16 @@ fn main() -> Result<()> {
                         root.install(std::path::Path::new(&package))
                     } else {
                         let temporary = tempfile::tempdir()?;
-                        let archive = repository::fetch(&package, temporary.path())?;
+                        let archive = catalog::fetch(&package, temporary.path())?;
                         root.install_named(&archive, Some(&package))
                     }
                 }
                 Command::Remove { name } => root.remove(&name),
                 Command::List => root.list(),
                 Command::Run { name, args } => root.run(&name, &args),
-                Command::Build { .. } => unreachable!(),
+                Command::Build { .. } | Command::Plan { .. } | Command::BuildClosure { .. } => {
+                    unreachable!()
+                }
             }
         }
     }

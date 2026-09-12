@@ -22,6 +22,21 @@ pub enum Command {
         #[arg(short, long)]
         output: PathBuf,
     },
+    /// Print dependency-first source build order without running build callbacks.
+    Plan {
+        recipe: PathBuf,
+    },
+    /// Build a pinned source closure into versioned package artifacts.
+    BuildClosure {
+        recipe: PathBuf,
+        #[arg(long)]
+        output_dir: PathBuf,
+        #[arg(long)]
+        build_root: PathBuf,
+        /// Reuse already-built immutable revisions with matching artifact hashes and dependencies.
+        #[arg(long)]
+        resume: bool,
+    },
     /// Install a catalog name (hello) or an explicit local path (./hello.shadow).
     Install {
         package: String,

@@ -1,12 +1,19 @@
-Shadow v0.2.1 — terminal progress
+Shadow v0.3.0 — exact source dependency closures (experimental)
 
-- Animated catalog/download/verification/install stages on interactive terminals.
-- Download bar with real bytes, total size, and transfer speed.
-- Colored success messages, with NO_COLOR support.
-- Plain stderr output when redirected; list output remains on stdout.
-- Download subprocess cleanup on failures and catalog size verification.
-- Legacy catalog retained for v0.2.0 clients.
+- Dependency-first Lua source builds with pinned source checksums.
+- Exact version/revision/archive-hash dependency records and shared installations.
+- Coexisting library revisions; removal blocked while packages reference them.
+- Library packages and multiple executable exports.
+- Relative ELF runtime paths plus explicit host ABI/display-library auditing.
+- Kitty source recipes, private Python, retained sources/licenses, and an Arch builder.
+- X11 software-rendered Kitty smoke test; real GPU/Wayland validation remains pending.
+- Independent v3 app catalog, without dropping legacy hello catalogs.
 
-Update using the same public curl installer, then try `shadow install hello`.
-The catalog still contains only hello. No changes to the preview's dependency,
-sandboxing, or recovery limitations; see README.md.
+Update the CLI using the existing public curl installer. App package sets are
+published separately after validation; availability is controlled by the v3 catalog.
+
+This remains a development preview, not a security-maintained distro. Dependencies
+are development pins, not a promise of newest versions. Compiler/bootstrap tools,
+Linux/glibc/C++ ABI, graphics/display/session interfaces, fonts, and certificates
+still come from the host. No full sandboxing, automatic upgrades/GC, independent
+signatures, or crash/power-loss recovery. See docs/source-packages.md.

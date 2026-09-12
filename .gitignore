@@ -6,5 +6,6 @@
 *.qcow2
 *.img
 /.shadow-dev/
+/.shadow-source/
 /dist/
 *.shadow

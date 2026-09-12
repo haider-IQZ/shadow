@@ -74,6 +74,18 @@ environment. Nonzero exits abort the build.
 recipes and install trusted packages. Builds inherit the host environment;
 local artifacts are not necessarily portable or reproducible.
 
+## Source dependencies (development)
+
+The development engine builds pinned Lua dependency graphs, records exact archive
+hashes, installs dependencies first, shares matching library revisions, and blocks
+removal while referenced. Libraries may coexist at different revisions. ELF
+runtime paths reference exact sibling prefixes rather than host app libraries.
+
+Kitty's source recipes and Arch-container build instructions are in
+[Source packages](docs/source-packages.md). They are not yet a published,
+security-reviewed package set. The manual source-build workflow does not publish
+packages automatically.
+
 ## Layout and current limitations
 
 ```text
@@ -97,8 +109,10 @@ Interrupted operations can leave inactive Cellar or work directories. Automatic
 recovery and power-loss durability are not implemented. Format v1 supports
 regular files/directories only, at most 20,000 entries and 512 MiB of declared
 extracted data. Links, traversal, duplicate archive paths, and special permission
-bits are rejected. Each package must supply `payload/bin/<package-name>`.
-Dependency versioning/isolation, additional executable exports, app upgrades,
+bits are rejected. Format v1 exports `payload/bin/<package-name>`; format v2
+supports libraries with no exports, multiple executable exports, and exact
+checksummed dependency references. Installations are transactional per package,
+not across an entire dependency closure. Complete host isolation, app upgrades,
 package signatures, build sandboxing, and garbage collection remain future work.
 
 ## Development

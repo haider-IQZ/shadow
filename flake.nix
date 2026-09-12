@@ -30,6 +30,7 @@
               rust
               lua5_4
               pkg-config
+              patchelf
               clang
               cmake
               gnumake

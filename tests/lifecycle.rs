@@ -2,6 +2,7 @@ use std::{fs, process::Command};
 
 fn shadow(args: &[&str], cwd: &std::path::Path) -> std::process::Output {
     Command::new(env!("CARGO_BIN_EXE_shadow"))
+        .args(["--root", ".shadow-dev"])
         .args(args)
         .current_dir(cwd)
         .output()

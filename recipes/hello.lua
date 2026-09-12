@@ -6,7 +6,7 @@ return {
     build = function(ctx)
         ctx.run({"sh", "-eu", "-c", [[
             mkdir -p "$1/bin"
-            cc -O2 -Wall -Wextra -Werror "$SHADOW_RECIPE_DIR/hello.c" -o "$1/bin/hello"
+            "${CC:-cc}" -O2 -Wall -Wextra -Werror "$SHADOW_RECIPE_DIR/hello.c" -o "$1/bin/hello"
         ]], "shadow-build", ctx.destdir})
     end,
 }

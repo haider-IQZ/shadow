@@ -8,8 +8,8 @@ use std::path::PathBuf;
 )]
 pub struct Cli {
     /// Dedicated, user-owned Shadow prefix. Never use a host-managed directory.
-    #[arg(long, global = true, default_value = ".shadow-dev")]
-    pub root: PathBuf,
+    #[arg(long, global = true)]
+    pub root: Option<PathBuf>,
     #[command(subcommand)]
     pub command: Command,
 }
@@ -22,8 +22,9 @@ pub enum Command {
         #[arg(short, long)]
         output: PathBuf,
     },
+    /// Install a catalog name (hello) or an explicit local path (./hello.shadow).
     Install {
-        package: PathBuf,
+        package: String,
     },
     Remove {
         name: String,

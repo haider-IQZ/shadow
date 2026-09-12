@@ -1,18 +1,15 @@
-First experimental Shadow package-manager preview.
+Shadow v0.2.0 — direct installation and named packages
 
-- Rust CLI with embedded Lua 5.4 and trusted local build recipes.
-- `.shadow` archives (zstd-compressed tar with a JSON manifest).
-- Dedicated user-owned prefix with readable `Cellar/name/version-rN` paths.
-- Build, install, list, run, and remove commands; serialized package mutations.
-- User-local CLI installer/updater with SHA-256 verification and previous-binary backup.
+Install with curl, then `shadow install hello`. No GitHub authentication, Git
+checkout, Rust compiler, or Lua installation required.
 
-This is a package-lifecycle prototype, not a complete distro package manager.
-No dependency resolution, download recipes, package signatures, build sandbox,
-upgrade command, or power-loss recovery yet. Packages have one entry-point
-executable named after the package. Archive symlinks and special files are rejected.
-Do not run as root or use a shared/writable-by-others prefix. Use only trusted
-recipes and packages. Test in a disposable VM.
+- Public HTTPS CLI installer with checksum verification and previous-CLI backup.
+- Named package downloads from a release-pinned catalog, verified with SHA-256.
+- Prebuilt static native hello package; local Lua recipe builds still supported.
+- Persistent default package root at ~/.local/share/shadow.
+- Cached CI builds and release package smoke test.
 
-The Linux x86_64 CLI is statically linked with musl and embeds Lua. Recipe build
-tools (such as `cc`) must be installed separately on the VM. The hello example
-compiles a native C program using that VM's compiler and system libraries.
+Linux x86_64 only. The catalog currently contains only hello. This remains an
+experimental package-lifecycle preview: no dependency resolver, app upgrades,
+independent package signatures, build sandbox, or power-loss recovery yet.
+Local recipes execute with user privileges. Test in a disposable VM, without sudo.

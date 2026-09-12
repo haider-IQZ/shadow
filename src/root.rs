@@ -72,8 +72,18 @@ impl Root {
     }
 
     pub fn install(&self, package: &Path) -> Result<()> {
+        self.install_named(package, None)
+    }
+
+    pub fn install_named(&self, package: &Path, expected_name: Option<&str>) -> Result<()> {
         let stage = tempfile::tempdir_in(self.path.join("work"))?;
         let manifest = archive::unpack(package, stage.path())?;
+        if let Some(name) = expected_name {
+            ensure!(
+                manifest.name == name,
+                "downloaded package name does not match request"
+            );
+        }
         let executable = stage.path().join("payload/bin").join(&manifest.name);
         let meta = fs::symlink_metadata(&executable)
             .context("v1 packages must provide payload/bin/<package-name>")?;

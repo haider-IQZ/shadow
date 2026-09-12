@@ -9,6 +9,11 @@ on:
 permissions:
   contents: read
 
+# Cancel superseded branch/PR checks, but never cancel a tagged release.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
 jobs:
   test:
     runs-on: ubuntu-24.04
@@ -18,13 +23,26 @@ jobs:
         run: |
           rustup toolchain install nightly-2026-09-12 --profile minimal --component rustfmt,clippy
           rustup default nightly-2026-09-12
+      - name: Cache test dependencies and build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            target
+          key: rust-test-${{ runner.os }}-${{ runner.arch }}-nightly-2026-09-12-${{ hashFiles('Cargo.lock', 'Cargo.toml', '.cargo/**') }}-${{ github.sha }}
+          restore-keys: |
+            rust-test-${{ runner.os }}-${{ runner.arch }}-nightly-2026-09-12-${{ hashFiles('Cargo.lock', 'Cargo.toml', '.cargo/**') }}-
+            rust-test-${{ runner.os }}-${{ runner.arch }}-nightly-2026-09-12-
       - run: cargo fmt --check
       - run: cargo clippy --locked --all-targets -- -D warnings
       - run: cargo test --locked
       - run: bash -n install.sh
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    # Warm the release cache on main: tag-only caches cannot be reused by later tags.
+    if: github.event_name != 'pull_request'
     needs: test
     runs-on: ubuntu-24.04
     permissions:
@@ -37,6 +55,18 @@ jobs:
           sudo apt-get install -y musl-tools
           rustup toolchain install nightly-2026-09-12 --profile minimal --target x86_64-unknown-linux-musl
           rustup default nightly-2026-09-12
+      - name: Cache musl release dependencies and build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            target
+          key: rust-musl-release-${{ runner.os }}-${{ runner.arch }}-nightly-2026-09-12-${{ hashFiles('Cargo.lock', 'Cargo.toml', '.cargo/**') }}-${{ github.sha }}
+          restore-keys: |
+            rust-musl-release-${{ runner.os }}-${{ runner.arch }}-nightly-2026-09-12-${{ hashFiles('Cargo.lock', 'Cargo.toml', '.cargo/**') }}-
+            rust-musl-release-${{ runner.os }}-${{ runner.arch }}-nightly-2026-09-12-
       - name: Build static Linux CLI
         env:
           CC_x86_64_unknown_linux_musl: musl-gcc
@@ -53,6 +83,7 @@ jobs:
           dist/shadow-linux-x86_64 --version
           (cd dist && sha256sum shadow-linux-x86_64 hello.lua hello.c install.sh > SHA256SUMS)
       - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release create "$GITHUB_REF_NAME" dist/* --verify-tag --title "Shadow $GITHUB_REF_NAME — experimental preview" --notes-file RELEASE_NOTES.md
